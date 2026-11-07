@@ -1,0 +1,4 @@
+#!/bin/bash
+PLUGIN="REPLACELBPPLUGINDIR"
+su loxberry -c "bash $LBPBINDIR/sonnen2lox_daemon.sh stop"
+exit 0

@@ -1,0 +1,42 @@
+{
+    "Sonnen" : {
+        "Transport": "http",
+        "API" : {
+            "Status": 
+            {
+                "Prefix": "Status",
+                "Endpoint" : "api/v2/status"
+            },
+            "Latest" :
+            {
+                "Prefix": "Latest",
+                "Endpoint" : "api/v2/latestdata"
+            },
+            "PowerMeter":
+            {
+                "Prefix": "PowerMeter",
+                "Endpoint" : "api/v2/powermeter"
+            },
+            "Inverter":
+            {
+                "Prefix": "Inverter",
+                "Endpoint" : "api/v2/inverter"
+            },
+            "Battery":
+            {
+                "Prefix": "Battery",
+                "Endpoint" : "api/v2/battery"
+            },
+            "Configurations":
+            {
+                "Prefix": "Configurations",
+                "Endpoint" : "api/v2/configurations"
+            },
+            "IO":
+            {
+                "Prefix": "IO",
+                "Endpoint" : "api/v2/io"
+            }
+        }
+    }
+}

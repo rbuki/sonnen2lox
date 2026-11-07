@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# #INIT
+# pluginName=REPLACELBPPLUGINDIR
+# . $LBPBIN/$pluginName/includes/functions
+
+# if [ ! $1 ]; then
+#     echo "use \"title\" or \"check\""
+#     exit 1 #nice try
+# fi
+
+# desc="Checks if listener is running as expected."
+# if [ $1 == "title" ] ; then
+#     echo $desc
+# fi
+
+# if [ $1 == "check" ] ; then
+#     scriptsRunning=$(ps -fade | grep lcrsmain.sh | grep -v grep -c)
+#     portsListening=$(lsof -Pi :$crashLoxPort | grep $crashLoxProt -c)
+#     isWorkingDnsConfig=$(jq -r '.state.IsWorkingDnsConfig' <<< "$pluginJson")
+#     deamonActivated=$(jq -r '.config.ActivateListener' <<< "$pluginJson")
+#     hcNotifyEnabled=$(jq -r '.config.HealthcheckNotifyMeOnBad' <<< "$pluginJson")
+
+#     #to review... !
+
+#     #STATES ARE
+#     #0/nothing  | UNKNOWN   | Grey  | This code shouldn't be returned by your healthcheck. It is set, if LoxBerry cannot call your healthcheck, or your healthcheck returns unexpected output.
+#     #  3        | ERROR     | Red   | If your healthcheck could figure out an error, set this status. The error will trigger a notification and email to the user. Only use the error state if it is really an error that requires user interaction.
+#     #  4        | WARNING   | Yellow| If you found something suspect, but cannot absolutely detect an error, use the warning flag.
+#     #  5        | OK        | Green | Your healthcheck detected no problems.
+#     #  6        | INFO      | Blue  | Use the Info state if your healthcheck does not check anything, but only shows information.
+
+
+#     fDesc=$desc
+#     fSeverity=0
+#     fMessage="Unknown or Unexpected state. Detailed states are; Script: $scriptsRunning, Port: $portsListening, DNSCfg: "$isWorkingDnsConfig", Activated: $deamonActivated."
+
+#     if [ $scriptsRunning -gt 0 ] && [ $portsListening -gt 0 ] && [ $isWorkingDnsConfig == true ] && [ $deamonActivated == true ]; then
+#         #pretty good state
+#         fSeverity=5
+#         fMessage="Scripts running, Port is Listening, DNS Configuration is pointing to me and listener is activated in configuration."
+#     else
+#         #simple cases in bad to good order
+#         if [ $isWorkingDnsConfig != true ]; then
+#             #DNS issues
+#             fSeverity=4
+#             fMessage="DNS configuration issues."
+#         fi
+#         if [ $portsListening -eq 0 ]; then
+#             #Port down
+#             fSeverity=3
+#             fMessage="Listener is down. Script: $scriptsRunning, Port: $portsListening"
+#         fi
+#         if [ $deamonActivated != true ]; then
+#             #Not activated. no more checks then.
+#             #it seems user is currently not interested in dumps or cannot activate the port at all.
+#             fSeverity=6
+#             fMessage="Listener is deactivated."
+#         fi
+
+#         #concatented cases
+#         if [ $deamonActivated == true ] && [ $isWorkingDnsConfig == true ] && ([ $scriptsRunning -eq 0 ] || [ $portsListening -eq 0 ]); then
+#             #Activated and DNS would also work but eigher scripts or port is down
+#             fSeverity=3 #clear error. user like to catch dumps but we cannot.
+#             fMessage="DNS Configuration is pointing to me and listener is activated in configuration but either scripts is not running or port is not listening. Try a Loxberry reboot."
+#         fi
+#         if [ $deamonActivated == true ] && [ $isWorkingDnsConfig != true ] && ( [ $scriptsRunning -eq 0 ] || [ $portsListening -eq 0 ] ); then
+#             #Activated but DNS is not well configured and eigher scripts or port is down.
+#             #it seems user like to catch but has many configuration issues.
+#             fSeverity=4
+#             fMessage="Listener is activated, but DNS Configuration is not good enough. Additionaly the script not running or the port is not listening. Verify your configuration."
+#         fi
+
+#     fi
+
+
+#     #finally
+#     #user don't threath this service as important. decrease levels.
+#     if [ $hcNotifyEnabled != true ]; then
+#         if [ $fSeverity -lt 5 ]; then
+#             #Decrease ERROR, WARN, UNKNOWN, --> make INFO
+#             fSeverity=6
+#         fi
+#     fi
+
+#     echo $fDesc
+#     echo $fSeverity
+#     echo $fMessage
+# fi

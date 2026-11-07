@@ -1,0 +1,10 @@
+{
+    "Sonnen": {
+        "Host": "sonnen.local",
+        "AuthToken": ""
+    },
+    "SendToLox": {
+        "Activated": true,
+        "PauseBetweenRunAsUsleep": 2500000
+    }
+}

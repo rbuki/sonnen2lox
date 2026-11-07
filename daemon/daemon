@@ -1,0 +1,9 @@
+#!/bin/bash
+# LoxBerry ruft Plugin-Daemons beim Boot OHNE Argument auf.
+# Deshalb Default auf "start" (sonst: case ohne Match -> Autostart tot).
+
+PLUGIN="REPLACELBPPLUGINDIR"
+ACTION="${1:-start}"
+
+# Steuer-Skript liegt im Plugin-bin-Verzeichnis
+su loxberry -c "bash $LBPBIN/$PLUGIN/sonnen2lox_daemon.sh $ACTION"
