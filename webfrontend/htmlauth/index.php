@@ -47,13 +47,6 @@ $sonnenApiLink = '<a href="' . htmlspecialchars($sonnenApiUrl) . '" target="_bla
 <div class="prep-step">
     <span class="prep-num">1</span>
     <div class="prep-body">
-        <p><?=sprintf($L['FORM0.PREP_STEP1'], $sonnenApiLink);?></p>
-    </div>
-</div>
-
-<div class="prep-step">
-    <span class="prep-num">1</span>
-    <div class="prep-body">
         <p><a href="settings.php"><?=$L['FORM0.PREP_STEP1'];?></a></p>
     </div>
 </div>
