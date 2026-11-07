@@ -52,23 +52,37 @@ $sonnenApiLink = '<a href="' . htmlspecialchars($sonnenApiUrl) . '" target="_bla
 </div>
 
 <div class="prep-step">
+    <span class="prep-num">1</span>
+    <div class="prep-body">
+        <p><a href="settings.php"><?=$L['FORM0.PREP_STEP1'];?></a></p>
+    </div>
+</div>
+
+<div class="prep-step">
     <span class="prep-num">2</span>
     <div class="prep-body">
-        <p><?=$L['FORM0.PREP_STEP2'];?></p>
+        <p><?=sprintf($L['FORM0.PREP_STEP2'], $sonnenApiLink);?></p>
     </div>
 </div>
 
 <div class="prep-step">
     <span class="prep-num">3</span>
     <div class="prep-body">
-        <p><?=$L['FORM0.PREP_STEP3'];?> <a href="<?=$L['FORM0.PREP_DOCURL'];?>" target="_blank" rel="noopener"><?=$L['FORM0.PREP_DOCURL_TEXT'];?></a></p>
+        <p><?=$L['FORM0.PREP_STEP3'];?></p>
     </div>
 </div>
 
 <div class="prep-step">
     <span class="prep-num">4</span>
     <div class="prep-body">
-        <p><?=$L['FORM0.PREP_STEP4'];?></p>
+        <p><?=$L['FORM0.PREP_STEP4'];?> <a href="<?=$L['FORM0.PREP_DOCURL'];?>" target="_blank" rel="noopener"><?=$L['FORM0.PREP_DOCURL_TEXT'];?></a></p>
+    </div>
+</div>
+
+<div class="prep-step">
+    <span class="prep-num">5</span>
+    <div class="prep-body">
+        <p><?=$L['FORM0.PREP_STEP5'];?></p>
     </div>
 </div>
 
