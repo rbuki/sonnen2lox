@@ -61,7 +61,7 @@ $sonnenApiLink = '<a href="' . htmlspecialchars($sonnenApiUrl) . '" target="_bla
 <div class="prep-step">
     <span class="prep-num">3</span>
     <div class="prep-body">
-        <p><?=$L['FORM0.PREP_STEP3'];?></p>
+        <p><a href="settings.php"><?=$L['FORM0.PREP_STEP3'];?></a></p>
     </div>
 </div>
 
