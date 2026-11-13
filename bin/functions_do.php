@@ -6,16 +6,19 @@ $L = LBSystem::readlanguage("language.ini");
 function enumContentUrl($url, $headers, $mappings, $prefix, &$loxValuesToSend, $log = null) {
 
     $ch = curl_init();
+    $log && $log->DEB("URL: " . $url);
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
     curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
     $output = curl_exec($ch);
+    $curlErr = ($output === false) ? curl_error($ch) : '';
     curl_close($ch);
     if ($output === false) {
-        $log && $log->WARN("Curl-Fehler: " . curl_error($ch));
+        $log && $log->WARN("Curl-Fehler: " . $curlErr);
     }
 
     $json = json_decode($output, true);
@@ -88,6 +91,7 @@ function LoxSetMsValues($transport, $remoteHost, $remotePort, $usr, $pwd, $Contr
     curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curlInit, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($curlInit, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($curlInit, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
     curl_setopt($curlInit, CURLOPT_TIMEOUT_MS, 500);
 
     $baseUrl = "$transport://$remoteHost:$remotePort/jdev/sps/io";
@@ -99,11 +103,9 @@ function LoxSetMsValues($transport, $remoteHost, $remotePort, $usr, $pwd, $Contr
         $path = "{$item['uid']}/{$item['value']}";
         curl_setopt($curlInit, CURLOPT_URL, "$baseUrl/$path");
         $retVal = curl_exec($curlInit);
-        curl_close($ch);
         if ($retVal === false) {
             $log && $log->ERR(($L['ERRORS.MS_UNREACHABLE'] ?? "Miniserver nicht erreichbar") . ": " . curl_error($curlInit));
             $msReachable = false;
-            # Rest der Liste als Fehler markieren (nicht senden)
             foreach ($ControlAndValue as $rest) {
                 $errors[$rest['name']] = $now;
             }
@@ -118,7 +120,8 @@ function LoxSetMsValues($transport, $remoteHost, $remotePort, $usr, $pwd, $Contr
         usleep($uSleepBetweenSend);
     }
 
-    # --- SendState aktualisieren ---
+    curl_close($curlInit);   // EINMAL, nach der Schleife
+
     if ($sendState) {
         foreach ($ControlAndValue as $item) {
             $name = $item['name'];
@@ -130,7 +133,6 @@ function LoxSetMsValues($transport, $remoteHost, $remotePort, $usr, $pwd, $Contr
                 }
             }
         }
-        # --- "pending"-Einträge aufräumen (nicht gesendete Mappings) ---
         foreach ($sendState->slave as $name => $state) {
             if (is_object($state) && isset($state->pending)) {
                 unset($sendState->slave->$name);
@@ -138,7 +140,6 @@ function LoxSetMsValues($transport, $remoteHost, $remotePort, $usr, $pwd, $Contr
         }
         $sendState->write();
     }
-    # --- Werte-Cache für Web-Anzeige aktualisieren ---
     if ($valuesCache) {
         if (!isset($valuesCache->slave->values)) {
             $valuesCache->slave->values = new stdClass();

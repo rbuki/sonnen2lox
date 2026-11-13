@@ -34,10 +34,7 @@ $IDLE = 500000;   # 0,5s Poll-Intervall im inaktiven Zustand
 
 while (true) {
     # --- Stop-Datei? → sauber beenden ---
-    if (file_exists($stopFile)) {
-        $log->INF("Stop-Datei erkannt, Daemon beendet sich.");
-        break;
-    }
+    if (file_exists($stopFile)) {  $log->INF("Stop-Datei erkannt, Daemon beendet sich.");  break;  }
 
     # --- Activated-Flag JEDE Iteration frisch lesen ---
     $pluginJson = new LBJSON("$lbpdatadir/plugin-settings.json");
@@ -65,22 +62,28 @@ while (true) {
         $headers = ["Auth-Token: {$pluginJson->Sonnen->AuthToken}", "Content-Type: application/json"];
         $loxValuesToSend = array();
         foreach (explode(",", $apiEndPoints) as $ep) {
-            # --- State aller Mappings dieses Endpoints auf "in Arbeit" setzen ---
-            foreach ($mappingsJson->slave as $map) {
-                if (explode("/", $map->Name)[0] === $ep) {
-                    $sendStateJson->slave->{$map->Name} = (object) array("pending" => true);
-                }
-            }
             $url = "{$sonnenapiJson->Sonnen->Transport}://{$pluginJson->Sonnen->Host}/{$sonnenapiJson->Sonnen->API->{$ep}->Endpoint}";
             enumContentUrl($url, $headers, $mappingsJson, $ep, $loxValuesToSend, $log);
+            if (file_exists($stopFile)) {  $log->INF("Stop-Datei erkannt, Daemon beendet sich.");  break;  }
         }
+
+        # State frisch lesen (robust: bei Lesefehler altes Objekt behalten)
+        $tmpState = @file_get_contents($sendStateFile);
+        if ($tmpState !== false) {
+            $sendStateJson = new LBJSON($sendStateFile);
+        }
+        foreach ($mappingsJson->slave as $map) {
+            $sendStateJson->slave->{$map->Name} = (object) array("pending" => true);
+            if (file_exists($stopFile)) {  $log->INF("Stop-Datei erkannt, Daemon beendet sich.");  break;  }
+        }
+
         $msOk = LoxSetMsValues($msTransport, $msIp, $msPort, $msUsr, $msPass, $loxValuesToSend, 10000, $log, $sendStateJson, $valuesCacheJson);
+
         if (!$msOk) {
             $log->WARN("Miniserver nicht erreichbar – kurze Pause, dann erneuter Versuch.");
-            usleep(2000000);   # 2s Backoff, dann Loop von vorn
-            continue;
+            usleep(2000000);
         }
-    }
+    }   
 
     usleep($pause);
 }

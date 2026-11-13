@@ -1,43 +1,201 @@
+/* ============================================================
+   sonnen2lox – pluginmain.css (bereinigt)
+   ============================================================ */
 
-.bad {
-	color: red;
-}
-
-.divTable{
-display: table;
-width: 100%;
-}
-.divTableRow {
-	display: table-row;
-}
-.divTableHeading {
-	background-color: #EEE;
-	display: table-header-group;
-}
-.divTableCell, .divTableHead {
-	display: table-cell;
-	padding: 3px 3px;
-}
-.divTableCellDesc {
-	display: table-cell;
-	padding: 3px 3px;
-	font-size: smaller;
-	vertical-align: middle;
-}
-.divTableHeading {
-	background-color: #EEE;
-	display: table-header-group;
-	font-weight: bold;
-}
-.divTableFoot {
-	background-color: #EEE;
-	display: table-footer-group;
-	font-weight: bold;
-}
-.divTableBody {
-	display: table-row-group;
+/* ---------- Allgemein ---------- */
+.intro-text {
+    color: #555;
+    line-height: 1.5;
+    max-width: 760px;
 }
 
+/* ---------- Mapping-Layout (zwei Spalten + Pfeil) ---------- */
+.mapWrap { display: flex; gap: 24px; align-items: flex-start; }
+.mapCol  { flex: 1 1 0; min-width: 0; }
+.mapSearch { width: 100%; box-sizing: border-box; padding: 8px; margin-bottom: 10px; }
+.mapList {
+    max-height: 520px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------- Einzelner Eintrag (Auswahl-Liste) ---------- */
+.mapItem {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    margin: 0 0 8px 0;
+    background: #f4f4f4;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.mapItem:hover { background: #ececec; border-color: #6DAC20; }
+.mapItem:has(input:checked) { border-color: #6DAC20; background: #e8f5e9; }
+.mapItem input[type="radio"] { display: none; }
+.mapItem .mi-name { display: block; font-weight: bold; color: #222; line-height: 1.3; }
+.mapItem .mi-sub  { display: block; font-size: 12px; color: #888; margin-bottom: 2px; }
+.mapItem .mi-meta { display: block; font-size: 12px; color: #888; }
+
+/* ---------- Filter-Klasse (von filterList() gesetzt) ---------- */
+.mapItem.mapHidden { display: none !important; }
+
+/* ---------- Bestehendes Mapping (Zeile mit Wert, Typ, Warnung) ---------- */
+.mapMapping .lb-btn-danger {
+    background: transparent;
+    color: #c0392b;
+    border: 1px solid #c0392b;
+    transition: background .15s, color .15s;
+}
+.mapMapping .lb-btn-danger:hover {
+    background: #c0392b;
+    color: #fff;
+}
+
+.mapMapping {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    margin: 0 0 8px 0;
+    background: #f4f4f4;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    cursor: default;
+    flex-wrap: wrap;
+}
+.mapMapping:hover { background: #f4f4f4; border-color: #e2e2e2; }
+
+.mapMapping .mi-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.mapMapping .mi-name {
+    display: block;
+    font-weight: bold;
+    color: #222;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 0 1 auto;
+}
+.mapMapping .mi-arrow {
+    display: inline-block;
+    color: #28a745;
+    flex: 0 0 auto;
+}
+.mapMapping .mi-ctrl {
+    display: block;
+    font-weight: bold;
+    color: #222;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+.mapMapping .mi-pill {
+    display: inline-flex;
+    align-items: stretch;
+    flex: 0 0 auto;
+}
+
+.mapMapping .mi-ctrl-type {
+    background: #ffe082;
+    border: 1px solid #808080;
+    border-right: none;
+    border-radius: 6px 0 0 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #555;
+    white-space: nowrap;
+    min-width: 70px;
+    text-align: center;
+    box-sizing: border-box;
+}
+.mapMapping .mi-val {
+    display: inline-block;
+    background: #fff;
+    border: 1px solid #808080;
+    border-radius: 0 6px 6px 0;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #808080;
+    width: 160px;
+    min-width: 90px;
+    max-width: 160px;
+    flex: 0 0 auto;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    margin-left: -8px;   /* gleicht den gap:8px des Containers aus -> bündig am Badge */
+}
+.mapMapping .mi-val-paused { color: #8d6e00; background: #fff8e1; }
+.mapMapping .lb-btn {
+    flex: 0 0 auto;
+    align-self: center;
+    padding: 6px 10px;
+    font-size: 13px;
+    line-height: 1.3;
+    min-height: 0;
+    height: auto;
+    border-radius: 6px;
+}
+.mapMapping .mi-error,
+.mapMapping .mi-warn,
+.mapMapping .mi-dup {
+    flex-basis: 100%;
+    margin-top: 4px;
+}
+
+/* Fehler-Zustand (UUID fehlt) */
+.mapMapping.mapError { background: #fdecea; border-color: #f5c6cb; }
+.mapMapping.mapError .mi-name,
+.mapMapping.mapError .mi-ctrl { color: #a94442; }
+.mapMapping.mapError .mi-arrow { color: #c0392b; }
+.mi-error {
+    display: block;
+    flex-basis: 100%;
+    font-size: 12px;
+    font-weight: bold;
+    color: #a94442;
+    margin-top: 4px;
+}
+.mi-error-uuid { font-family: monospace; font-weight: normal; color: #a94442; }
+
+/* Warn-Zustand (Senden fehlgeschlagen / doppeltes Ziel) – eigene Zeile */
+.mapMapping.mapSendWarn,
+.mapMapping.mapDupWarn { background: #fff8e1; border-color: #ffe082; }
+.mapMapping.mapSendWarn .mi-name,
+.mapMapping.mapSendWarn .mi-ctrl,
+.mapMapping.mapDupWarn  .mi-name,
+.mapMapping.mapDupWarn  .mi-ctrl { color: #8d6e00; }
+.mapMapping.mapSendWarn .mi-arrow,
+.mapMapping.mapDupWarn  .mi-arrow { color: #f9a825; }
+.mi-warn, .mi-dup {
+    display: block;
+    flex-basis: 100%;
+    font-size: 12px;
+    font-weight: bold;
+    color: #8d6e00;
+    margin-top: 4px;
+}
+
+/* ---------- Pfeil-Button (Mitte) ---------- */
 .mapArrow {
     -webkit-appearance: none;
     appearance: none;
@@ -59,451 +217,327 @@ width: 100%;
     transition: background 0.15s, transform 0.1s;
     padding: 0;
 }
-.mapArrow.ready {
-    background: #6DAC20;
-    cursor: pointer;
-}
-.mapArrow.ready:hover {
-    background: #6DAC20;
-    transform: scale(1.06);
-}
+.mapArrow.ready { background: #6DAC20; cursor: pointer; }
+.mapArrow.ready:hover { transform: scale(1.06); }
 
-.mapWrap { display:flex; gap:24px; align-items:flex-start; }
-.mapCol  { flex:1; min-width:0; }
-.mapCol h2 { font-size:14px; letter-spacing:1px; color:#888; margin:8px 0; }
-.mapSearch { width:100%; box-sizing:border-box; padding:8px; margin-bottom:10px; }
-.mapList { max-height:520px; overflow-y:auto;  }
-
-.mapItem {
-    display: block;
-    padding: 10px 14px;
-    margin: 0 0 8px 0;
-    background: #f4f4f4;
-    border: 1px solid #e2e2e2;
-    border-radius: 8px;
-    cursor: pointer;
-}
-.mapItem:hover {
-    background: #ececec;
-    border-color: #6DAC20;
-}
-.mapItem:has(input:checked) {
-    border-color: #6DAC20;
-    background: #e8f5e9;
-}
-
-.mapItem input[type="radio"] {
+/* ---------- Status-Popup (zentriert, stört Layout nicht) ---------- */
+#save-status {
     display: none;
-}
-
-.mapItem .mi-name {
-    display: block;
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    border-radius: 6px;
+    color: #fff;
     font-weight: bold;
-    color: #222;
-    line-height: 1.3;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+    z-index: 2000;
+    max-width: 90%;
+    text-align: center;
 }
-.mapItem .mi-sub {
-    display: block;
-    font-size: 12px;
-    color: #888;
-    margin-bottom: 2px;
-}
-.mapItem .mi-meta {
-    display: block;
-    font-size: 12px;
-    color: #888;
-}
+#save-status.ok  { display: block; background: #2e7d32; }
+#save-status.err { display: block; background: #c0392b; }
 
-.mapMapping {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+/* ---------- Settings-Seite: Formular-Zeilen ---------- */
+.ctrlRow { display: flex; align-items: center; gap: 14px; }
+.ctrlRow > input[type=number] { flex: 0 0 90px; width: 90px; }
+.ctrlRow > input[type=text]   { flex: 1 1 auto; min-width: 0; }
+.ctrlRow > button             { flex: 0 0 auto; margin-left: auto; }
+/* ---------- Settings: Token-Feld (breite = host, auge zentriert) ---------- */
+.token-field {
+    position: relative;
+    max-width: 320px;          /* gleiche breite wie das host-feld */
+}
+#sonnen_token {
     width: 100%;
     box-sizing: border-box;
-    cursor: default;
-    flex-wrap: nowrap;
+    padding-right: 42px;       /* platz fürs auge, text läuft nicht drunter */
 }
-.mapMapping:hover {
-    background: #f4f4f4;
-    border-color: #e2e2e2;
-}
-
-/* Inhalt nicht mehr stapeln, sondern inline auf einer Linie */
-.mapMapping .mi-body {
-    flex: 1 1 auto;
-    min-width: 0;
+#pwToggle {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);   /* vertikal zentriert */
+    width: 30px;
+    height: 30px;
     display: flex;
-    align-items: baseline;
-    gap: 8px;
-    flex-wrap: nowrap;
-}
-.mapMapping .mi-name,
-.mapMapping .mi-arrow,
-.mapMapping .mi-ctrl {
-    display: inline;
-    font-weight: bold;
-    color: #222;
-    line-height: 1.3;
-    white-space: nowrap;
-}
-.mapMapping .mi-arrow {
-    color: #28a745;
-}
-.mapMapping .mi-uuid {
-    display: inline;
-    font-size: 12px;
-    color: #888;
-    font-weight: normal;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.mapDelete {
-    -webkit-appearance: none;
-    appearance: none;
-    flex: 0 0 auto;
-    border: 1px solid #c0392b;
-    background: #fff;
-    color: #c0392b;
-    border-radius: 6px;
-    padding: 6px 12px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-}
-.mapDelete:hover {
-    background: #c0392b;
-    color: #fff;
-}
-
-.mapMapping.mapError {
-    background: #fdecea;
-    border-color: #f5c6cb ;
-}
-.mapMapping.mapError:hover {
-    background: #fdecea ;
-    border-color: #f1aeb5 ;
-}
-
-.mapMapping.mapError .mi-name,
-.mapMapping.mapError .mi-ctrl {
-    color: #a94442;
-}
-.mapMapping.mapError .mi-arrow {
-    color: #c0392b;
-}
-
-/* Hinweiszeile unter der Kachel – bricht dafür um */
-.mapMapping.mapError .mi-body {
-    flex-wrap: wrap;
-}
-.mi-error {
-    display: block;
-    flex-basis: 100%;
-    font-size: 12px;
-    font-weight: bold;
-    color: #a94442;
-    white-space: normal;
-    margin-top: 2px;
-}
-
-.mi-error-uuid {
-    font-weight: normal;
-    font-family: monospace;
-    color: #a94442;
-}
-
-.mi-error-hint {
-    display: block;
-    flex-basis: 100%;
-    font-size: 12px;
-    color: #a94442;
-    font-weight: normal;
-    margin-top: 2px;
-}
-
-.mapMapping.mapSendWarn {
-    background: #fff8e1 !important;
-    border-color: #ffe082 !important;
-}
-.mapMapping.mapSendWarn:hover {
-    background: #fff8e1 !important;
-    border-color: #ffca28 !important;
-}
-.mapMapping.mapSendWarn .mi-body { flex-wrap: wrap; }
-.mapMapping.mapSendWarn .mi-name,
-.mapMapping.mapSendWarn .mi-ctrl { color: #8d6e00; }
-.mapMapping.mapSendWarn .mi-arrow { color: #f9a825; }
-.mi-warn {
-    display: inline;
-    font-size: 12px;
-    font-weight: bold;
-    color: #8d6e00;
-    white-space: nowrap;
-}
-.mi-warn-hint {
-    display: block;
-    flex-basis: 100%;
-    font-size: 12px;
-    color: #8d6e00;
-    font-weight: normal;
-    margin-top: 2px;
-}
-
-.mapMapping.mapDupWarn {
-    background: #fff8e1 !important;
-    border-color: #ffe082 !important;
-}
-.mapMapping.mapDupWarn:hover {
-    background: #fff8e1 !important;
-    border-color: #ffca28 !important;
-}
-.mapMapping.mapDupWarn .mi-body { flex-wrap: wrap; }
-.mapMapping.mapDupWarn .mi-name,
-.mapMapping.mapDupWarn .mi-ctrl { color: #8d6e00; }
-.mapMapping.mapDupWarn .mi-arrow { color: #f9a825; }
-
-.mi-dup-icon {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 18px;
-    flex: 0 0 auto;
-    border-radius: 50%;
-    background: #f9a825;
-    color: #fff;
-    font-weight: bold;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #6DAC20;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
+#pwToggle i { font-size: 16px; line-height: 1; }
+#pwToggle:hover { color: #5a8f18; }
+/* ---------- write.php: IP-Chips + Hinweise ---------- */
+.ipChips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.ipChip {
+    -webkit-appearance: none;
+    appearance: none;
+    border: 1px solid #6DAC20;
+    background: #fff;
+    color: #2e7d32;
+    border-radius: 6px;
+    padding: 6px 10px;
     font-size: 13px;
-    line-height: 1;
+    cursor: pointer;
+    transition: background .15s, color .15s;
 }
-.mi-dup {
-    display: inline;
-    font-size: 12px;
-    font-weight: bold;
-    color: #8d6e00;
-    white-space: nowrap;
-}
-.mi-dup-hint {
-    display: block;
-    flex-basis: 100%;
-    font-size: 12px;
-    color: #8d6e00;
-    font-weight: normal;
-    margin-top: 2px;
-}
+.ipChip:hover { background: #6DAC20; color: #fff; }
+.ipChip code { font-family: monospace; }
+
+.ctrlHint { flex: 1 1 auto; min-width: 0; max-width: 360px; font-size: 12px; line-height: 1.4; }
+.ex-comment { color: #6DAC20; font-weight: bold; }
 
 
-.intro-text {
-    color: #555;
-    line-height: 1.5;
-    max-width: 720px;
-}
+/* ---------- Übersicht: Vorbereitung ---------- */
+.prep-card { padding: 18px 22px; }
+.prep-headline { margin: 0 0 14px 0; font-weight: bold; }
 
-.prep-thumb-link {
-    display: block;
-    margin-bottom: 20px;
+/* Nummerierte grüne Kreise (wie früher) */
+.prep-steps {
+    list-style: none;
+    counter-reset: prepstep;
+    margin: 0;
+    padding: 0;
 }
-
-.prep-lead {
-    font-weight: bold;
-    color: #444;
-    margin: 18px 0 12px 0;
-}
-.prep-step {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
+.prep-steps > li {
+    counter-increment: prepstep;
+    position: relative;
+    padding: 6px 0 6px 44px;
     margin: 0 0 14px 0;
+    line-height: 1.5;
 }
-.prep-num {
-    flex: 0 0 auto;
-    width: 24px;
-    height: 24px;
+.prep-steps > li::before {
+    content: counter(prepstep);
+    position: absolute;
+    left: 0;
+    top: 4px;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
     border-radius: 50%;
     background: #6DAC20;
     color: #fff;
     font-weight: bold;
-    text-align: center;
-    line-height: 24px;
     font-size: 14px;
 }
-.prep-body {
-    flex: 1 1 auto;
-    min-width: 0;
+/* ---------- Schritt-Links: überall Grün ---------- */
+.prep-steps > li > a {
+    color: #6DAC20;
+    font-weight: bold;
+    text-decoration: underline;
 }
-.prep-body p {
-    margin: 0 0 8px 0;
-    color: #333;
+.prep-steps > li > a:link,
+.prep-steps > li > a:visited,
+.prep-steps > li > a:active {
+    color: #6DAC20;
 }
+.prep-steps > li > a:hover {
+    color: #5a8f18;
+}
+
+.prep-screenshot { margin: 0 0 16px 44px; }
 .prep-thumb {
-    width: 150px;
-    height: auto;
+    max-width: 200px;
     border: 1px solid #ddd;
     border-radius: 6px;
     cursor: zoom-in;
-    display: block;
+    transition: box-shadow .15s, transform .1s;
 }
-.prep-thumb-link:hover .prep-thumb {
-    border-color: #6DAC20;
-}
+.prep-thumb:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.25); transform: scale(1.02); }
+
+
+/* Modal-Bild zentriert */
+#imgModal .lb-modal-content { text-align: center; }
+#imgModal { max-width: 90vw; }
+
 .prep-note {
-    margin-top: 18px;
+    margin: 18px 0 0 0;
     padding: 10px 14px;
     background: #fff8e1;
     border-left: 4px solid #f9a825;
-    border-radius: 4px;
     color: #8d6e00;
     font-size: 13px;
 }
 
-/* Lightbox */
-.lightbox {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 3000;
-    text-align: center;
-    cursor: zoom-out;
+/* ---------- Hinweis-Balken (write.php & Co.) ---------- */
+/* Gelb wie der "Note"-Balken auf der Übersichtsseite */
+.note-box {
+    margin: 8px 0 0 0;
+    padding: 10px 14px;
+    background: #fff8e1;
+    border-left: 4px solid #f9a825;
+    color: #8d6e00;
+    font-size: 13px;
+    line-height: 1.5;
 }
-.lightbox.open { display: block; }
-.lightbox-img {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 92%;
-    max-height: 92%;
-    border-radius: 6px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+
+/* Blau, gleiche Form – für erklärende Infos (z.B. Whitelist-Hinweis) */
+.note-box.info {
+    background: #e7f1fb;
+    border-left-color: #2b6cb0;
+    color: #1f4e79;
 }
-.lightbox-close {
+
+#imgModal { position: relative; max-width: 90vw; }
+#imgModal .lb-modal-content { text-align: center; }
+.lb-modal-close,
+.lb-modal-close:focus,
+.lb-modal-close:focus-visible,
+.lb-modal-close:active {
     position: absolute;
-    top: 16px;
-    right: 24px;
-    color: #fff;
-    font-size: 36px;
+    top: 8px;
+    right: 12px;
+    border: none;
+    background: transparent;
+    background-color: transparent;
+    color: #555;
+    font-size: 28px;
     line-height: 1;
     cursor: pointer;
-    z-index: 3001;
-}
-
-.mapMapping .mi-val {
-    display: inline-block;
-    /* margin-left entfernt → klebt an der gelben Box */
-    background: #fff;
-    border-radius: 0 6px 6px 0; /* nur rechts rund → schließt an */
-    padding: 6px 12px;
-    font-size: 13px;
-    font-weight: bold;
-    color: #808080;
-    white-space: nowrap;
-    min-width: 150px;
-    border: 1px solid #808080;
-    text-align: center;
-    box-sizing: border-box;
-}
-
-.mapMapping .mi-val-paused {
-    color: #8d6e00;
-    background: #fff8e1;
-}
-
-/* Gelbe Box = linke Box → sie bekommt den Auto-Abstand */
-.mapMapping .mi-ctrl-type {
-    display: inline-block;
-    margin-left: auto;          /* schiebt den Block rechtsbündig */
-    background: #ffe082;
-    border-radius: 6px 0 0 6px; /* nur links rund → schließt an */
-    padding: 6px 12px;
-    font-size: 13px;
-    font-weight: bold;
-    color: #555;
-    white-space: nowrap;
-    min-width: 100px;
-    border: 1px solid #808080;
-    text-align: center;
-    box-sizing: border-box;
-}
-
-
-/* ===== Settings-Seite: Formular-Zeilen ===== */
-.ctrlRow { display:flex; align-items:center; gap:14px; }
-.ctrlRow > .ui-flipswitch {
-    flex: 0 0 auto;
+    padding: 0 6px;
     margin: 0;
+    z-index: 10;
+    outline: none;
+    box-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+    text-shadow: none;
+}
+.lb-modal-close:hover { color: #c0392b; }
+
+/* ---------- Settings-Seite: Card-Abschnitte ---------- */
+/* ---------- Settings-/Card-Abschnitte: eigenständige Boxen ---------- */
+.settings-card {
+    background: #ffffff;
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    padding: 20px 24px;
+    margin: 0 0 20px 0;
+}
+.settings-card-headline {
+    margin: 0 0 18px 0;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #333;
+    border-bottom: 1px solid #e8e8e8;
+    padding-bottom: 10px;
 }
 
-.ctrlRow { align-items: flex-start; }
-.ctrlRow > .ui-flipswitch { margin-top: 2px; }
-
-/* Eingabe-Spalte feste Breite → alle Felder enden rechts an derselben Kante */
-table td:nth-child(2) { width: 420px; }
-
-/* Sekundenfeld: fester, breiter Block */
-.ctrlRow > input[type=number] { flex: 0 0 90px; width: 90px; }
-
-/* Host-Feld: füllt den Rest */
-.ctrlRow > input[type=text]   { flex: 1 1 auto; min-width: 0; }
-
-/* PID-Button rechtsbündig am Spaltenende */
-.ctrlRow > button             { flex: 0 0 auto; margin-left: auto; }
-
-/* Token-Feld auf volle Spaltenbreite */
-#sonnen_token { width: 100%; box-sizing: border-box; }
 
 
-.ctrlRow input[data-role="none"] {
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
+/* lb-content soll kein eigener Rahmen mehr sein – nur die Cards rahmen */
+.lb-content {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
 }
 
-
-
-/* Passwort-Toggle-Button: jQuery-Mobile-Optik neutralisieren */
-#pwToggle, #pwToggle:hover, #pwToggle:focus, #pwToggle:active {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  text-shadow: none !important;
-  opacity: 1 !important;
+.toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+.toggle-label {
+    font-weight: bold;
+    color: #333;
 }
 
-/* Fehler-Banner */
-#saveError {
-  display:none; position:fixed; top:16px; left:50%; transform:translateX(-50%);
-  padding:12px 20px; border-radius:6px; color:#fff; font-weight:bold;
-  background:#c0392b; box-shadow:0 3px 10px rgba(0,0,0,0.4);
-  z-index:2000; max-width:90%; text-align:center;
+/* QueryString-Tabelle: feste Spaltenbreiten, damit nichts umbricht */
+.query-table {
+    table-layout: fixed;
+    width: 100%;
 }
-#saveError.show { display:block; }
-
-
-.ipChips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:4px; }
-.ipChip {
-    -webkit-appearance:none; appearance:none;
-    border:1px solid #6DAC20; background:#fff; color:#2e7d32;
-    border-radius:6px; padding:6px 10px; font-size:13px; cursor:pointer;
-    transition:background .15s,color .15s;
-}
-.ipChip:hover { background:#6DAC20; color:#fff; }
-.ipChip code { font-family:monospace; }
-
-.ctrlHint {
-    flex: 1 1 auto;
-    min-width: 0;
-    max-width: 360px;
-    font-size: 12px;
-    line-height: 1.4;
+.query-table td code {
+    white-space: nowrap;
+    word-break: normal;
+    overflow-wrap: normal;
+    display: inline-block;
+    max-width: 100%;
 }
 
-.ex-comment {
+/* Beispiele: Kommentar + curl-Befehl */
+.example-item { margin: 0 0 14px 0; }
+.example-item:last-child { margin-bottom: 0; }
+.example-comment {
     color: #6DAC20;
     font-weight: bold;
+    font-family: monospace;
+    margin-bottom: 2px;
+}
+.example-curl {
+    display: block;
+    font-family: monospace;
+    word-break: break-all;   /* lange URLs dürfen umbrechen, unlike QueryString-Referenz */
+    color: #333;
+}
+
+/* ---------- Grüne Links (z.B. API-Doku) ---------- */
+.green-link,
+.green-link:link,
+.green-link:visited,
+.green-link:active {
+    color: #6DAC20;
+    font-weight: bold;
+    text-decoration: underline;
+}
+.green-link:hover {
+    color: #5a8f18;
+}
+
+/* ---------- Settings-Cards: Labels + Felder linksbündig ---------- */
+.settings-card .lb-form-row {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+.settings-card .lb-form-label {
+    margin: 0 0 4px 0;
+    text-align: left;
+}
+.settings-card .lb-form-field {
+    width: 100%;
+    text-align: left;
+}
+
+.hint-text {
+    color: #888;
+    font-size: 13px;
+    margin-top: 4px;
+    text-align: left;
+}
+
+/* "Alle" + Sekunden-Box auf einer Linie */
+.settings-card .pause-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Daemon-Zeile: kein Label, Button rückt nach oben */
+.settings-card .daemon-row .lb-form-label {
+    display: none;
+}
+
+.pause-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 12px 0;
+}
+.pause-label {
+    font-weight: bold;
+    color: #333;
 }

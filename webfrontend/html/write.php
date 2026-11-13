@@ -180,6 +180,21 @@ switch ($action) {
         ));
         break;
 
+    // ?action=rct&seconds=3600   (Remote Command Timeout, Sekunden)
+    case 'rct':
+        $seconds = (string)($_GET['seconds'] ?? '');
+        if (!ctype_digit($seconds) || (int)$seconds < 0 || (int)$seconds > 86400) {
+            respond(400, array('status' => 'error', 'error' => $L['FORM3.API_BAD_RCT'] ?? 'seconds must be 0-86400'));
+        }
+        list($resp, $code, $err) = sonnen_request('PUT', "/api/v2/configurations", $sonnenHost, $sonnenToken,
+                                                    array('EM_RemoteCommandTimeout' => $seconds));
+        if ($err) respond(502, array('status' => 'error', 'error' => $L['FORM3.API_UNREACHABLE'] ?? 'unreachable', 'detail' => $err));
+        respond(($code >= $okMin && $code <= $okMax) ? 200 : $code, array(
+            'status' => 'ok', 'action' => 'rct', 'seconds' => (int)$seconds,
+            'http' => $code, 'response' => json_decode($resp, true)
+        ));
+        break;
+
     // ?action=standby&enabled=true|false
     case 'standby':
         $enabled = is_enabled($_GET['enabled'] ?? '');
@@ -197,6 +212,6 @@ switch ($action) {
             respond(400, array(
                 'status' => 'error',
                 'error'  => $L['FORM3.API_BAD_ACTION'] ?? 'bad action',
-                'allowed' => array('setpoint', 'operatingmode', 'usoc', 'standby')
+                'allowed' => array('setpoint', 'rct', 'operatingmode', 'usoc', 'standby')
             ));
 }

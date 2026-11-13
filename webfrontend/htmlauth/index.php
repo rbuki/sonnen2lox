@@ -2,117 +2,60 @@
 require_once "loxberry_system.php";
 require_once "loxberry_web.php";
 require_once "loxberry_json.php";
-
 require_once "init.php";
 
-global $ms;
-global $L;
-global $pluginJson;
-global $generalJson;
-global $pluginName;
-global $pluginTitle;
-
+global $ms,$L,$pluginJson,$pluginName,$pluginTitle;
 $template_title = $pluginTitle;
 $helplink = $L['BASIC.HELPLINK'];
 $helptemplate = "pluginhelp.php";
 buildNavbar(1);
-
 $htmlhead = "<link rel='stylesheet' href='./res/pluginmain.css'>";
-$htmlhead .= "<script src='./res/pluginscripts.js'></script>";
+LBWeb::lbheader($template_title, $helplink, $helptemplate, true);
 
-LBWeb::lbheader($template_title, $helplink, $helptemplate);
+// API-URL für Schritt 2
+$apiUrl = "http://" . htmlspecialchars($sonnenHostName) . "/dash/software-integration/json-api";
+
+// Screenshot (sprachabhängig, aus language_xx.ini: IMG_API_ENABLE)
+$imgApi = $L['FORM0.IMG_API_ENABLE'] ?? "";
+$imgApiPath = "./res/" . $imgApi;
+$showImg = $imgApi !== "" && @file_exists(__DIR__ . "/res/" . $imgApi);
 ?>
+<div class="lb-content">
+<div style="max-width:820px;">
 
-<h2><?=$L['FORM0.TITLE'];?></h2>
+<p class="intro-text"><?=$L['FORM0.DESCRIPTION'];?></p>
+<p class="intro-text"><?=$L['FORM0.DESCRIPTION1'];?></p>
 
-<p class="intro-text">
-    <?=$L['FORM0.DESCRIPTION'];?>
-</p>
+<div class="lb-card prep-card">
+  <h4 class="prep-headline"><?=$L['FORM0.PREP_TITLE'];?> – <?=$L['FORM0.PREP_INTRO'];?></h4>
 
-<h3><?=$L['FORM0.PREP_TITLE'];?></h3>
+  <?php if ($showImg): ?>
+  <div class="prep-screenshot">
+    <img src="<?=htmlspecialchars($imgApiPath);?>" alt="Sonnen API aktivieren"
+        class="prep-thumb" onclick="document.getElementById('imgModal').showModal();">
+  </div>
 
-<p class="prep-lead"><?=$L['FORM0.PREP_INTRO'];?></p>
-
-<a href="./res/<?=$L['FORM0.IMG_API_ENABLE'];?>" class="prep-thumb-link" data-lightbox="./res/<?=$L['FORM0.IMG_API_ENABLE'];?>">
-    <img src="./res/<?=$L['FORM0.IMG_API_ENABLE'];?>"
-         alt="<?=htmlspecialchars($L['FORM0.PREP_INTRO']);?>"
-         class="prep-thumb"
-         style="width:150px; max-width:150px; height:auto; display:block;">
-</a>
-
-<?php
-$sonnenApiUrl  = "http://" . $sonnenHostName . "/dash/software-integration/json-api";
-$sonnenApiLink = '<a href="' . htmlspecialchars($sonnenApiUrl) . '" target="_blank" rel="noopener">' . htmlspecialchars($sonnenApiUrl) . '</a>';
-?>
-<div class="prep-step">
-    <span class="prep-num">1</span>
-    <div class="prep-body">
-        <p><a href="settings.php"><?=$L['FORM0.PREP_STEP1'];?></a></p>
+  <dialog class="lb-modal" id="imgModal">
+    <button type="button" class="lb-modal-close" onclick="document.getElementById('imgModal').close();" aria-label="Schliessen">&times;</button>
+    <div class="lb-modal-content">
+      <img src="<?=htmlspecialchars($imgApiPath);?>" alt="Sonnen API aktivieren"
+          style="max-width:100%; height:auto; cursor:zoom-out;"
+          onclick="document.getElementById('imgModal').close();">
     </div>
+  </dialog>
+  <?php endif; ?>
+
+  <ol class="prep-steps">
+    <li><a href="settings.php"><?=$L['FORM0.PREP_STEP1'];?></a></li>
+    <li><?=sprintf($L['FORM0.PREP_STEP2'], '<a href="'.$apiUrl.'" target="_blank" rel="noopener">'.$apiUrl.'</a>'); ?></li>
+    <li><a href="settings.php"><?=$L['FORM0.PREP_STEP3'];?></a></li>
+    <li><?=$L['FORM0.PREP_STEP4'];?> <a href="<?=$L['FORM0.PREP_DOCURL'];?>" target="_blank" rel="noopener"><?=$L['FORM0.PREP_DOCURL_TEXT'];?></a></li>
+    <li><?=$L['FORM0.PREP_STEP5'];?></li>
+  </ol>
+
+  <div class="prep-note"><?=$L['FORM0.PREP_NOTE'];?></div>
 </div>
 
-<div class="prep-step">
-    <span class="prep-num">2</span>
-    <div class="prep-body">
-        <p><?=sprintf($L['FORM0.PREP_STEP2'], $sonnenApiLink);?></p>
-    </div>
 </div>
-
-<div class="prep-step">
-    <span class="prep-num">3</span>
-    <div class="prep-body">
-        <p><a href="settings.php"><?=$L['FORM0.PREP_STEP3'];?></a></p>
-    </div>
 </div>
-
-<div class="prep-step">
-    <span class="prep-num">4</span>
-    <div class="prep-body">
-        <p><?=$L['FORM0.PREP_STEP4'];?> <a href="<?=$L['FORM0.PREP_DOCURL'];?>" target="_blank" rel="noopener"><?=$L['FORM0.PREP_DOCURL_TEXT'];?></a></p>
-    </div>
-</div>
-
-<div class="prep-step">
-    <span class="prep-num">5</span>
-    <div class="prep-body">
-        <p><?=$L['FORM0.PREP_STEP5'];?></p>
-    </div>
-</div>
-
-<p class="prep-note"><?=$L['FORM0.PREP_NOTE'];?></p>
-
-<!-- Lightbox -->
-<div id="lightbox" class="lightbox" role="dialog" aria-modal="true">
-    <span class="lightbox-close" aria-label="Schliessen">&times;</span>
-    <img class="lightbox-img" src="" alt="">
-</div>
-
-<script>
-(function(){
-    var lb = document.getElementById('lightbox');
-    var lbImg = lb.querySelector('.lightbox-img');
-    var lbClose = lb.querySelector('.lightbox-close');
-
-    // Lightbox aus dem jQuery-Mobile-Seitencontainer herauslösen,
-    // sonst bricht position:fixed wegen transform:translate3d zusammen
-    if (lb && lb.parentNode !== document.body) {
-        document.body.appendChild(lb);
-    }
-
-    function open(src){ lbImg.src = src; lb.classList.add('open'); }
-    function close(){ lb.classList.remove('open'); lbImg.src = ''; }
-
-    document.querySelectorAll('.prep-thumb-link').forEach(function(a){
-        a.addEventListener('click', function(e){
-            e.preventDefault();
-            open(this.getAttribute('data-lightbox'));
-        });
-    });
-    lb.addEventListener('click', close);
-    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
-})();
-</script>
-
-<?php
-LBWeb::lbfooter();
-?>
+<?php LBWeb::lbfooter(); ?>

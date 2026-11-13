@@ -1,28 +1,13 @@
 <?php
 
 function buildNavbar($activePanelNo) {
-
-    global $navbar;
-    global $L;
-    global $pluginName;
-
-    $navbar[1]['Name'] = $L['BASIC.FORM0'];
-    $navbar[1]['URL'] = 'index.php';
-
-    $navbar[2]['Name'] = $L['BASIC.FORM2'];
-    $navbar[2]['URL'] = 'settings.php';
-    $navbar[2]['Notify_Package'] = $pluginName;
-    $navbar[2]['Notify_Name'] = 'crashes';
-
-    $navbar[3]['Name'] = $L['BASIC.FORM1'];
-    $navbar[3]['URL'] = 'config.php';
-
-    $navbar[4]['Name'] = $L['BASIC.FORM3'];
-    $navbar[4]['URL'] = 'write.php';
-
-    $navbar[$activePanelNo]['active'] = True;
+    global $navbar; global $L; global $pluginName;
+    $navbar[1]['Name'] = $L['BASIC.FORM0']; $navbar[1]['URL'] = 'index.php';
+    $navbar[2]['Name'] = $L['BASIC.FORM2']; $navbar[2]['URL'] = 'settings.php';
+    $navbar[3]['Name'] = $L['BASIC.FORM1']; $navbar[3]['URL'] = 'config.php';
+    $navbar[4]['Name'] = $L['BASIC.FORM3']; $navbar[4]['URL'] = 'write.php';
+    $navbar[$activePanelNo]['active'] = true;
 }
-
 
 function LoxGetLatestLoxAPP3JsonAsArray($transport, $remoteHost, $remotePort, $usr, $pwd, $pluginName) {
     $curlInit = curl_init();
@@ -31,6 +16,7 @@ function LoxGetLatestLoxAPP3JsonAsArray($transport, $remoteHost, $remotePort, $u
     curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curlInit, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($curlInit, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($curlInit, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
     curl_setopt($curlInit, CURLOPT_TIMEOUT_MS, 500);
 
     curl_setopt($curlInit, CURLOPT_URL, "$transport://$remoteHost:$remotePort/jdev/sps/LoxAPPversion3");
@@ -68,7 +54,7 @@ function LoxGetLatestLoxAPP3JsonAsArray($transport, $remoteHost, $remotePort, $u
         }
         file_put_contents("/tmp/tmp-{$pluginName}.LoxAPP3.json", $newFile);
     }
-    curl_close($ch);
+    curl_close($curlInit);
     return json_decode($newFile, true);
 }
 
@@ -84,9 +70,10 @@ function SonnenEnumContentUrl($url,$token,$prefix,$offsetSeconds) {
     curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curlInit, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($curlInit, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($curlInit, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
     curl_setopt($curlInit, CURLOPT_TIMEOUT_MS, 500);
     $output = curl_exec($curlInit);
-    curl_close($ch);
+    curl_close($curlInit);
     $json = json_decode($output, true);
 
     foreach($json as $key => $val) {
