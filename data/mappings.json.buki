@@ -1,0 +1,77 @@
+{
+    "Inverter/fac": {
+        "Name": "Inverter/fac",
+        "LoxoneControlUUID": "1eddf754-0122-d97e-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    },
+    "Inverter/pac_total": {
+        "Name": "Inverter/pac_total",
+        "LoxoneControlUUID": "1e9ebaed-016c-ac46-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    },
+    "PowerMeter/1/kwh_exported": {
+        "Name": "PowerMeter/1/kwh_exported",
+        "LoxoneControlUUID": "1e9e8a75-0250-948e-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    },
+    "PowerMeter/1/kwh_imported": {
+        "Name": "PowerMeter/1/kwh_imported",
+        "LoxoneControlUUID": "1e9e8a43-0152-26b0-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    },
+    "PowerMeter/0/kwh_imported": {
+        "Name": "PowerMeter/0/kwh_imported",
+        "LoxoneControlUUID": "1e9e877c-03ae-921b-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    },
+    "Status/BackupBuffer": {
+        "Name": "Status/BackupBuffer",
+        "LoxoneControlUUID": "1e996ae0-038f-82bd-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    },
+    "Status/BatteryCharging": {
+        "Name": "Status/BatteryCharging",
+        "LoxoneControlUUID": "1e996b77-01b7-1f08-ffff789ae561863a",
+        "LoxoneControlType": "Digital"
+    },
+    "Status/BatteryDischarging": {
+        "Name": "Status/BatteryDischarging",
+        "LoxoneControlUUID": "1e996bca-01d0-4754-ffff789ae561863a",
+        "LoxoneControlType": "Digital"
+    },
+    "Status/GridFeedIn_W": {
+        "Name": "Status/GridFeedIn_W",
+        "LoxoneControlUUID": "1e996c6f-01f2-14aa-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    },
+    "Status/OperatingMode": {
+        "Name": "Status/OperatingMode",
+        "LoxoneControlUUID": "1e996f97-02de-63e8-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    },
+    "Status/Production_W": {
+        "Name": "Status/Production_W",
+        "LoxoneControlUUID": "1e996dbb-03bd-1d3e-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    },
+    "Status/RemainingCapacity_Wh": {
+        "Name": "Status/RemainingCapacity_Wh",
+        "LoxoneControlUUID": "1e997050-024c-8b3f-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    },
+    "Status/Uac": {
+        "Name": "Status/Uac",
+        "LoxoneControlUUID": "1e9edbf2-00c5-dfdd-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    },
+    "Status/USOC": {
+        "Name": "Status/USOC",
+        "LoxoneControlUUID": "1e996ec9-000e-4a26-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    },
+    "Status/Consumption_W": {
+        "Name": "Status/Consumption_W",
+        "LoxoneControlUUID": "1e9967be-02bb-5c57-ffff789ae561863a",
+        "LoxoneControlType": "Analog"
+    }
+}

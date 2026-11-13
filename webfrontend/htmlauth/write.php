@@ -20,6 +20,7 @@ $whitelist=(isset($writeCfg->slave->ip_whitelist)&&is_array($writeCfg->slave->ip
 
 $lbIp=LBSystem::get_localip();
 $writeUrl="http://".$lbIp."/plugins/{$lbpplugindir}/write.php";
+$writeBase=$writeUrl;   // Basis ohne QueryString -> für Copy-Buttons
 $browserIp=$_SERVER['REMOTE_ADDR'] ?? '';
 $ajaxWriteFile="LBPDATA/".basename($lbpdatadir)."/write-config.json";
 
@@ -74,7 +75,15 @@ LBWeb::lbheader($template_title,$helplink,$helptemplate,true);
 <!-- ====== CARD 3: Verfügbare QueryStrings ====== -->
 <div class="lb-card settings-card">
   <h4 class="settings-card-headline"><?=$L['FORM3.ENDPOINT_TITLE'];?></h4>
-  <p><?=$L['FORM3.ENDPOINT'];?> <code><?=htmlspecialchars($writeUrl);?></code></p>
+
+  <div class="endpoint-box">
+    <span class="endpoint-label"><?=$L['FORM3.ENDPOINT'];?></span>
+    <button type="button" class="endpoint-copy lb-btn lb-btn-sm" onclick="copyEndpoint()" title="URL kopieren">
+      <i class="pi pi-copy"></i>
+    </button>
+    <code class="endpoint-url" id="endpointUrl"><?=htmlspecialchars($writeUrl);?></code>
+  </div>
+
   <table class="lb-table query-table">
     <colgroup>
       <col style="width:16%;">
@@ -83,13 +92,48 @@ LBWeb::lbheader($template_title,$helplink,$helptemplate,true);
     </colgroup>
     <thead><tr><th><?=$L['FORM3.TH_ACTION'];?></th><th><?=$L['FORM3.TH_QUERY'];?></th><th><?=$L['FORM3.TH_DESC'];?></th></tr></thead>
     <tbody>
-      <tr><td><?=$L['FORM3.A_USOC'];?></td><td><code>?action=usoc&amp;value=20</code></td><td><?=str_replace(' · ', '<br>', htmlspecialchars($L['FORM3.D_USOC']));?></td></tr>
-      <tr><td><?=$L['FORM3.A_MODE'];?></td><td><code>?action=operatingmode&amp;mode=2</code></td><td><?=str_replace(' · ', '<br>', htmlspecialchars($L['FORM3.D_MODE']));?>
+      <tr>
+        <td><?=$L['FORM3.A_USOC'];?></td>
+        <td>
+          <div class="qs-copy">
+            <button type="button" class="qs-copy-btn" data-url="<?=htmlspecialchars($writeBase);?>?action=usoc&amp;value=20" title="URL kopieren"><i class="pi pi-copy"></i></button>
+            <code>?action=usoc&amp;value=20</code>
+          </div>
+        </td>
+        <td><?=str_replace(' · ', '<br>', htmlspecialchars($L['FORM3.D_USOC']));?></td>
+      </tr>
+      <tr>
+        <td><?=$L['FORM3.A_MODE'];?></td>
+        <td>
+          <div class="qs-copy">
+            <button type="button" class="qs-copy-btn" data-url="<?=htmlspecialchars($writeBase);?>?action=operatingmode&amp;mode=2" title="URL kopieren"><i class="pi pi-copy"></i></button>
+            <code>?action=operatingmode&amp;mode=2</code>
+          </div>
+        </td>
+        <td><?=str_replace(' · ', '<br>', htmlspecialchars($L['FORM3.D_MODE']));?>
           <div class="note-box" style="margin-top:12px;"><?=$L['FORM3.D_MODE_Note'];?></div>
-      </td></tr>
-      <tr><td><?=$L['FORM3.A_SETPOINT'];?></td><td><code>?action=setpoint&amp;direction=charge|discharge&amp;watts=2500</code></td><td><?=str_replace(' · ', '<br>', htmlspecialchars($L['FORM3.D_SETPOINT']));?></td></tr>
-      <tr><td><?=$L['FORM3.A_RCT'];?></td><td><code>?action=rct&amp;seconds=3600</code></td><td><?=str_replace(' · ', '<br>', htmlspecialchars($L['FORM3.D_RCT']));?></td></tr>
-      <tr><td><?=$L['FORM3.A_STANDBY'];?></td><td><code>?action=standby&amp;enabled=true|false</code></td><td><?=str_replace(' · ', '<br>', htmlspecialchars($L['FORM3.D_STANDBY']));?></td></tr>
+        </td>
+      </tr>
+      <tr>
+        <td><?=$L['FORM3.A_SETPOINT'];?></td>
+        <td>
+          <div class="qs-copy">
+            <button type="button" class="qs-copy-btn" data-url="<?=htmlspecialchars($writeBase);?>?action=setpoint&amp;direction=charge&amp;watts=2500" title="URL kopieren"><i class="pi pi-copy"></i></button>
+            <code>?action=setpoint&amp;direction=charge|discharge&amp;watts=2500</code>
+          </div>
+        </td>
+        <td><?=str_replace(' · ', '<br>', htmlspecialchars($L['FORM3.D_SETPOINT']));?></td>
+      </tr>
+      <tr>
+        <td><?=$L['FORM3.A_STANDBY'];?></td>
+        <td>
+          <div class="qs-copy">
+            <button type="button" class="qs-copy-btn" data-url="<?=htmlspecialchars($writeBase);?>?action=standby&amp;enabled=true" title="URL kopieren"><i class="pi pi-copy"></i></button>
+            <code>?action=standby&amp;enabled=true|false</code>
+          </div>
+        </td>
+        <td><?=str_replace(' · ', '<br>', htmlspecialchars($L['FORM3.D_STANDBY']));?></td>
+      </tr>
     </tbody>
   </table>
 
@@ -117,11 +161,6 @@ LBWeb::lbheader($template_title,$helplink,$helptemplate,true);
   <div class="example-item">
     <div class="example-comment"># <?=$L['FORM3.EX_SETPOINT_DISCHARGE'];?></div>
     <code class="example-curl">curl "<?=$writeUrl;?>?action=setpoint&amp;direction=discharge&amp;watts=3000"</code>
-  </div>
-
-  <div class="example-item">
-    <div class="example-comment"># <?=$L['FORM3.EX_RCT'];?></div>
-    <code class="example-curl">curl "<?=$writeUrl;?>?action=rct&amp;seconds=3600"</code>
   </div>
 
   <div class="example-item">
@@ -167,6 +206,28 @@ function save(field, value) {
       })
       .catch(function(e){ showStatus(e.message, true); });
 }
+
+function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function(){ showStatus('✓ URL kopiert', false); });
+    } else {
+        // Fallback für http / ältere Browser
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); showStatus('✓ URL kopiert', false); } catch(e) {}
+        document.body.removeChild(ta);
+    }
+}
+
+// Endpoint-URL oben im Rahmen
+function copyEndpoint() {
+    copyText(document.getElementById('endpointUrl').textContent);
+}
+
+// QueryString-Zeilen in der Tabelle (delegiert -> robust)
+$(document).on('click', '.qs-copy-btn', function(){
+    copyText(this.getAttribute('data-url'));
+});
 
 $("#enabled").on("change", function(){ save("enabled", this.checked ? "true" : "false"); });
 $("#trust_proxy").on("change", function(){ save("trust_proxy", this.checked ? "true" : "false"); });

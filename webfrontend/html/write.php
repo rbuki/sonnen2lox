@@ -40,10 +40,6 @@ if (!$enabled) {
 }
 
 // ---------- Sender-IP ----------
-// Default: echte TCP-Quell-IP (REMOTE_ADDR) - vom Client nicht fälschbar.
-// X-Forwarded-For wird NUR ausgewertet, wenn trust_proxy aktiv ist
-// (ausschließlich sinnvoll, wenn der LoxBerry hinter einem vertrauenswürdigen
-//  Reverse-Proxy läuft, der diesen Header selbst setzt).
 $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
 $xffSource = false;
 if ($trustProxy && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -67,7 +63,7 @@ function ip_in_whitelist($ip, $whitelist) {
             $bits = (int)$bits;
             if ($bits < 0 || $bits > 32) continue;
             $mask = ($bits === 0) ? 0 : (-1 << (32 - $bits));
-            $subnetLong = ip2long($subnet) & $mask;   // Netzwerk-Adresse
+            $subnetLong = ip2long($subnet) & $mask;
             if (($ipLong & $mask) === $subnetLong) return true;
         } elseif ($ip === $entry) {
             return true;
@@ -158,7 +154,7 @@ switch ($action) {
         }
         list($resp, $code, $err) = sonnen_request('PUT', "/api/v2/configurations", $sonnenHost, $sonnenToken,
                                                     array('EM_OperatingMode' => $mode));
-        if ($err) respond(502, array('status' => 'error', 'error' => 'sonnenBatterie nicht erreichbar', 'detail' => $err));
+        if ($err) respond(502, array('status' => 'error', 'error' => $L['FORM3.API_UNREACHABLE'] ?? 'unreachable', 'detail' => $err));
         respond(($code >= $okMin && $code <= $okMax) ? 200 : $code, array(
             'status' => 'ok', 'action' => 'operatingmode', 'mode' => $mode,
             'http' => $code, 'response' => json_decode($resp, true)
@@ -173,24 +169,9 @@ switch ($action) {
         }
         list($resp, $code, $err) = sonnen_request('PUT', "/api/v2/configurations", $sonnenHost, $sonnenToken,
                                                     array('EM_USOC' => $value));
-        if ($err) respond(502, array('status' => 'error', 'error' => 'sonnenBatterie nicht erreichbar', 'detail' => $err));
-        respond(($code >= $okMin && $code <= $okMax) ? 200 : $code, array(
-            'status' => 'ok', 'action' => 'usoc', 'value' => (int)$value,
-            'http' => $code, 'response' => json_decode($resp, true)
-        ));
-        break;
-
-    // ?action=rct&seconds=3600   (Remote Command Timeout, Sekunden)
-    case 'rct':
-        $seconds = (string)($_GET['seconds'] ?? '');
-        if (!ctype_digit($seconds) || (int)$seconds < 0 || (int)$seconds > 86400) {
-            respond(400, array('status' => 'error', 'error' => $L['FORM3.API_BAD_RCT'] ?? 'seconds must be 0-86400'));
-        }
-        list($resp, $code, $err) = sonnen_request('PUT', "/api/v2/configurations", $sonnenHost, $sonnenToken,
-                                                    array('EM_RemoteCommandTimeout' => $seconds));
         if ($err) respond(502, array('status' => 'error', 'error' => $L['FORM3.API_UNREACHABLE'] ?? 'unreachable', 'detail' => $err));
         respond(($code >= $okMin && $code <= $okMax) ? 200 : $code, array(
-            'status' => 'ok', 'action' => 'rct', 'seconds' => (int)$seconds,
+            'status' => 'ok', 'action' => 'usoc', 'value' => (int)$value,
             'http' => $code, 'response' => json_decode($resp, true)
         ));
         break;
@@ -201,17 +182,17 @@ switch ($action) {
         $bool = $enabled ? true : false;
         list($resp, $code, $err) = sonnen_request('POST', "/api/v2/standby", $sonnenHost, $sonnenToken,
                                                     null, array('enabled' => $bool));
-        if ($err) respond(502, array('status' => 'error', 'error' => 'sonnenBatterie nicht erreichbar', 'detail' => $err));
+        if ($err) respond(502, array('status' => 'error', 'error' => $L['FORM3.API_UNREACHABLE'] ?? 'unreachable', 'detail' => $err));
         respond(($code >= $okMin && $code <= $okMax) ? 200 : $code, array(
             'status' => 'ok', 'action' => 'standby', 'enabled' => $bool,
             'http' => $code, 'response' => json_decode($resp, true)
         ));
         break;
 
-        default:
-            respond(400, array(
-                'status' => 'error',
-                'error'  => $L['FORM3.API_BAD_ACTION'] ?? 'bad action',
-                'allowed' => array('setpoint', 'rct', 'operatingmode', 'usoc', 'standby')
-            ));
+    default:
+        respond(400, array(
+            'status' => 'error',
+            'error'  => $L['FORM3.API_BAD_ACTION'] ?? 'bad action',
+            'allowed' => array('setpoint', 'operatingmode', 'usoc', 'standby')
+        ));
 }
