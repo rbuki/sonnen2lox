@@ -104,7 +104,7 @@ function LoxSetMsValues($transport, $remoteHost, $remotePort, $usr, $pwd, $Contr
         curl_setopt($curlInit, CURLOPT_URL, "$baseUrl/$path");
         $retVal = curl_exec($curlInit);
         if ($retVal === false) {
-            $log && $log->ERR(($L['ERRORS.MS_UNREACHABLE'] ?? "Miniserver nicht erreichbar") . ": " . curl_error($curlInit));
+            $log && $log->WARN(($L['ERRORS.MS_UNREACHABLE'] ?? "Miniserver nicht erreichbar") . ": " . curl_error($curlInit));
             $msReachable = false;
             foreach ($ControlAndValue as $rest) {
                 $errors[$rest['name']] = $now;

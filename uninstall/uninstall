@@ -1,4 +1,19 @@
 #!/bin/bash
+
+echo "<INFO> Creating temporary folders and store /data in there. Just in case."
+
+ARGV1=$1     # Temp-Ordner (Kurzform)
+ARGV3=$3     # Plugin-Installationsordner (FOLDER)
+ARGV5=$5     # LoxBerry Basis-Ordne
+
+
+
+BACKUPDIR="/tmp/${ARGV3}_uninstall/data"
+mkdir -p "$BACKUPDIR"
+
+echo "<INFO> Backing up existing data from $ARGV5/data/plugins/$ARGV3/ to $BACKUPDIR"
+cp -p -v -r "$ARGV5/data/plugins/$ARGV3/" "$BACKUPDIR" 2>/dev/null
+
 PLUGIN="REPLACELBPPLUGINDIR"
-su loxberry -c "bash $LBPBINDIR/sonnen2lox_daemon.sh stop"
+su loxberry -c "bash $ARGV5/bin/plugins/$ARGV3/sonnen2lox_daemon.sh stop"
 exit 0

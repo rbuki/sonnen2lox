@@ -30,6 +30,15 @@ $log = LBLog::newLog(array(
 ));
 $log->LOGSTART("sonnen2lox daemon gestartet");
 
+# --- Schreib-Aktions-Log: eine Datei pro Daemon-Start ---
+$writeLogFile = "$lbplogdir/" . currtime('filehires') . "_write.log";
+$wlog = LBLog::newLog(array(
+    "name"     => "write",
+    "filename" => $writeLogFile,
+));
+$wlog->LOGSTART("Schreib-API Log (Daemon-Start)");
+file_put_contents("/tmp/{$lbpplugindir}_writelog", $writeLogFile);
+
 $IDLE = 500000;   # 0,5s Poll-Intervall im inaktiven Zustand
 
 while (true) {
@@ -89,5 +98,7 @@ while (true) {
 }
 
 @unlink($stopFile);
+@unlink("/tmp/{$lbpplugindir}_writelog");
+$wlog->LOGEND("Schreib-API Log (Daemon-Stop)");
 $log->LOGEND("sonnen2lox daemon gestoppt");
 ?>

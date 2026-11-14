@@ -5,23 +5,56 @@
  * Schutz: enabled-Flag + IPv4-Whitelist (konfiguriert im Tab "Schreiben").
  *
  * Benötigt KEINEN Miniserver -> bindet bewusst NICHT init.php ein.
+ *
+ * Log: hängt an die vom Daemon erzeugte Schreib-Logdatei an (Pointer-Datei
+ * in /tmp). Loggt nur im Debug-Modus (Plugin-Loglevel > 6).
  */
 
 require_once "loxberry_system.php";
 require_once "loxberry_json.php";
+require_once "loxberry_log.php";
 
 // Sprache absolut laden (html/ liegt nicht im Include-Pfad)
 $L = LBSystem::readlanguage(LBPTEMPLATEDIR . "/lang/language.ini");
 
 header('Content-Type: application/json; charset=utf-8');
 
+// ---------- Schreib-Logger: hängt an die Daemon-Datei an ----------
+// Der Daemon schreibt bei LOGSTART den Dateinamen in eine Pointer-Datei.
+// write.php liest den Pointer und öffnet dieselbe Datei mit append.
+// Kein LOGSTART/LOGEND hier -> keine eigene DB-Session pro Request.
+$wlog     = null;
+$debugLog = false;
+$pointer  = "/tmp/{$lbpplugindir}_writelog";
+if (file_exists($pointer)) {
+    $wf = trim(@file_get_contents($pointer));
+    if ($wf !== "") {
+        $wlog = LBLog::newLog(array(
+            "name"     => "write",
+            "filename" => $wf,
+            "append"   => 1,
+        ));
+        $debugLog = ($wlog->loglevel() > 6);
+    }
+}
+
 $writeConfigFile = "$lbpdatadir/write-config.json";
 $settingsFile    = "$lbpdatadir/plugin-settings.json";
 
-// ---------- Antwort-Helfer ----------
+// ---------- Antwort-Helfer (loggt jede Aktion im Debug-Modus) ----------
 function respond($httpCode, $data) {
+    global $wlog, $debugLog;
     http_response_code($httpCode);
-    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+    if ($debugLog && $wlog) {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '-';
+        $qs = $_SERVER['QUERY_STRING'] ?? '';
+        if ($qs === '') { $qs = '(kein QueryString)'; }
+        $wlog->DEB(currtime('hr') . " | REQ: $qs | IP: $ip | HTTP $httpCode | RESP: $json");
+    }
+
+    echo $json;
     exit;
 }
 
